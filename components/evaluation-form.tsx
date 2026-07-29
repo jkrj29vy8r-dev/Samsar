@@ -8,12 +8,34 @@ import { Field } from "@/components/ui/field";
 import { Segmented } from "@/components/ui/segmented";
 import { PhotoUpload, type PhotoPreview } from "@/components/ui/photo-upload";
 import { ComparablesField } from "@/components/comparables-field";
+import { EvaluationResultView } from "@/components/evaluation-result";
+import {
+  ALLOWED_IMAGE_TYPES,
+  type CarDetails,
+  type EvaluationResult,
+  type ImageMediaType,
+} from "@/types/evaluation";
 
 interface CarPhoto extends PhotoPreview {
   file: File;
 }
 
+type Status = "idle" | "loading" | "error";
+
 const MAX_PHOTOS = 6;
+
+function isAllowedType(type: string): type is ImageMediaType {
+  return (ALLOWED_IMAGE_TYPES as string[]).includes(type);
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+    reader.onerror = () => reject(new Error("nu am putut citi poza"));
+    reader.readAsDataURL(file);
+  });
+}
 
 export function EvaluationForm() {
   const [photos, setPhotos] = useState<CarPhoto[]>([]);
@@ -26,7 +48,10 @@ export function EvaluationForm() {
   const [askPrice, setAskPrice] = useState("");
   const [extras, setExtras] = useState("");
   const [comps, setComps] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
+  const [result, setResult] = useState<EvaluationResult | null>(null);
 
   function addPhotos(files: File[]) {
     setPhotos((prev) => {
@@ -48,29 +73,76 @@ export function EvaluationForm() {
     });
   }
 
+  const car: CarDetails = {
+    model,
+    year,
+    km,
+    engine,
+    fuel,
+    gearbox,
+    extras,
+    askPrice,
+  };
+
   const canSubmit =
     askPrice.trim() !== "" && year.trim() !== "" && comps.trim() !== "";
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (canSubmit) setSubmitted(true);
+    if (!canSubmit || status === "loading") return;
+
+    setStatus("loading");
+    setError("");
+    try {
+      const usable = photos.filter((p) => isAllowedType(p.file.type));
+      const photoPayload = await Promise.all(
+        usable.map(async (p) => ({
+          mediaType: p.file.type as ImageMediaType,
+          data: await fileToBase64(p.file),
+        })),
+      );
+
+      const res = await fetch("/api/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ car, comps, photos: photoPayload }),
+      });
+
+      const data: { result?: EvaluationResult; error?: string } = await res.json();
+      if (!res.ok || !data.result) {
+        throw new Error(data.error ?? "Ceva n-a mers.");
+      }
+
+      setResult(data.result);
+      setStatus("idle");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ceva n-a mers.");
+      setStatus("error");
+    }
   }
 
-  // Rezumatul datelor colectate — deocamdată doar le afișăm (fără API).
-  const details: { label: string; value: string }[] = [
-    { label: "Marcă și model", value: model },
-    { label: "An", value: year },
-    { label: "Km", value: km },
-    { label: "Motorizare", value: engine },
-    { label: "Combustibil", value: fuel },
-    { label: "Cutie", value: gearbox },
-    { label: "Dotări", value: extras },
-    { label: "Preț cerut", value: askPrice ? `${askPrice} €` : "" },
-  ].filter((row) => row.value.trim() !== "");
+  function reset() {
+    photos.forEach((p) => URL.revokeObjectURL(p.url));
+    setPhotos([]);
+    setModel("");
+    setYear("");
+    setKm("");
+    setEngine("");
+    setFuel("");
+    setGearbox("");
+    setAskPrice("");
+    setExtras("");
+    setComps("");
+    setResult(null);
+    setError("");
+    setStatus("idle");
+  }
 
-  const compsCount = comps
-    .split("\n")
-    .filter((line) => line.trim() !== "").length;
+  if (result) {
+    return <EvaluationResultView car={car} result={result} onReset={reset} />;
+  }
+
+  const loading = status === "loading";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -148,42 +220,25 @@ export function EvaluationForm() {
 
       <ComparablesField value={comps} onChange={setComps} />
 
-      <Button type="submit" fullWidth disabled={!canSubmit}>
-        {canSubmit ? "Evaluează deal-ul" : "Completează preț, an și comparabile"}
-      </Button>
-
-      {submitted && (
-        <Card label="Date colectate">
-          <p className="mb-3 text-sm leading-relaxed text-soft">
-            Deocamdată doar îți arăt ce am strâns. Evaluarea reală se conectează
-            la pasul următor.
-          </p>
-
-          <dl className="divide-y divide-slate-900/5">
-            <SummaryRow label="Poze" value={`${photos.length} din ${MAX_PHOTOS}`} />
-            {details.map((row) => (
-              <SummaryRow key={row.label} label={row.label} value={row.value} />
-            ))}
-            <SummaryRow
-              label="Comparabile"
-              value={`${compsCount} ${compsCount === 1 ? "anunț" : "anunțuri"}`}
-            />
-          </dl>
-
-          <pre className="mt-3 max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-2xl border border-white/60 bg-white/50 p-3 text-[13px] leading-relaxed text-ink">
-            {comps}
-          </pre>
+      {status === "error" && (
+        <Card>
+          <p className="text-sm font-semibold text-stop">Evaluarea nu a mers</p>
+          <p className="mt-1 text-sm leading-relaxed text-soft">{error}</p>
         </Card>
       )}
-    </form>
-  );
-}
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3 py-2">
-      <dt className="text-sm text-soft">{label}</dt>
-      <dd className="text-right text-sm font-medium text-ink">{value}</dd>
-    </div>
+      <Button type="submit" fullWidth disabled={!canSubmit || loading}>
+        {loading ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+            Compar cu piața…
+          </span>
+        ) : canSubmit ? (
+          "Evaluează deal-ul"
+        ) : (
+          "Completează preț, an și comparabile"
+        )}
+      </Button>
+    </form>
   );
 }
