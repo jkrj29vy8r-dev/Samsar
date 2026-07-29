@@ -1,31 +1,68 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0b0f14;
-  --foreground: #f5f7fa;
-  --muted: #9aa7b4;
-  --accent: #38bdf8;
+/*
+ * Sistemul de design Samsar — tokeni extrași din identitatea vizuală.
+ * Fundal tip hârtie, accent verde de curse, cifre monospace tabular (odometru),
+ * verdict semafor verde / galben / roșu.
+ */
+@theme {
+  /* === Suprafețe (hârtie deschisă) === */
+  --color-paper: #eef0ec;
+  --color-card: #fbfcfa;
+  --color-ink: #16201b;
+  --color-soft: #5b645e;
+  --color-line: #d5d9d2;
+
+  /* === Verde de curse — merită === */
+  --color-go: #1f6e43;
+  --color-go-soft: #e7f0ea;
+  --color-go-line: #bfd8c9;
+
+  /* === Galben — marjă subțire === */
+  --color-warn: #b0700f;
+  --color-warn-soft: #f6ecd8;
+  --color-warn-line: #e7d2a3;
+
+  /* === Roșu — nu iese === */
+  --color-stop: #a5382c;
+  --color-stop-soft: #f3e0dc;
+  --color-stop-line: #e6bdb4;
+
+  /* Gri de dezactivare pentru butoane */
+  --color-disabled: #c6ccc5;
+  --color-disabled-ink: #8a8f89;
+
+  /* === Tipografie === */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo,
+    monospace;
+
+  /* === Raze de colț === */
+  --radius-field: 9px;
+  --radius-btn: 12px;
+  --radius-card: 14px;
+  --radius-ticket: 16px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-}
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    min-height: 100vh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* Focus vizibil pentru navigarea din taste. */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  /* Focus vizibil pentru navigarea din taste. */
+  :focus-visible {
+    outline: 2px solid var(--color-go);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 /* Respectă preferința de mișcare redusă. */
