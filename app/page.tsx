@@ -52,12 +52,20 @@ export default function HomePage() {
           ))}
         </div>
 
-        <Link
-          href="/evalueaza"
-          className="brand-gradient rounded-2xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)] transition hover:brightness-105 active:scale-[0.98]"
-        >
-          Începe evaluarea →
-        </Link>
+        <div className="flex w-full flex-col gap-2.5">
+          <Link
+            href="/gaseste"
+            className="brand-gradient rounded-2xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)] transition hover:brightness-105 active:scale-[0.98]"
+          >
+            Găsește-mi un deal →
+          </Link>
+          <Link
+            href="/evalueaza"
+            className="rounded-2xl border border-white/65 bg-white/55 px-6 py-3.5 text-[15px] font-semibold text-ink backdrop-blur-md transition hover:bg-white/75 active:scale-[0.98]"
+          >
+            Evaluează o mașină anume
+          </Link>
+        </div>
       </div>
     </main>
   );
