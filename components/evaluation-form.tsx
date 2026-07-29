@@ -218,7 +218,11 @@ export function EvaluationForm() {
         </div>
       </Card>
 
-      <ComparablesField value={comps} onChange={setComps} />
+      <ComparablesField
+        value={comps}
+        onChange={setComps}
+        query={{ model, year, km }}
+      />
 
       {status === "error" && (
         <Card>

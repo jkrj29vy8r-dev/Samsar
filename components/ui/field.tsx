@@ -29,6 +29,21 @@ export function Field({ label, hint, wide, className, ...props }: FieldProps) {
   );
 }
 
+/** Doar textarea-ul stilizat, fără etichetă — pentru cazuri cu antet propriu. */
+export function Textarea({
+  className,
+  rows = 5,
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <textarea
+      rows={rows}
+      className={cn(controlClass, "resize-y leading-relaxed", className)}
+      {...props}
+    />
+  );
+}
+
 interface TextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   hint?: string;
@@ -40,17 +55,12 @@ export function TextareaField({
   hint,
   wide,
   className,
-  rows = 5,
   ...props
 }: TextareaFieldProps) {
   return (
     <label className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2", className)}>
       <span className="text-[13px] font-medium text-soft">{label}</span>
-      <textarea
-        rows={rows}
-        className={cn(controlClass, "resize-y leading-relaxed")}
-        {...props}
-      />
+      <Textarea {...props} />
       {hint && <span className="text-xs leading-snug text-soft">{hint}</span>}
     </label>
   );
