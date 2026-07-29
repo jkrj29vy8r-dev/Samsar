@@ -57,6 +57,7 @@ export async function POST(request: Request): Promise<Response> {
       count: deals.length,
       total: result.listings.length,
       deals,
+      comps: result.text,
     });
   } catch (error) {
     console.error("Deals route error:", error);

@@ -1,4 +1,7 @@
-import type { Deal } from "@/types/deal";
+"use client";
+
+import { useState } from "react";
+import type { Deal, DealAnalysis } from "@/types/deal";
 import type { VerdictStatus } from "@/types/verdict";
 import { Card } from "@/components/ui/card";
 import { computeVerdict, eur } from "@/lib/money";
@@ -10,7 +13,30 @@ const badgeClass: Record<VerdictStatus, string> = {
   neutral: "bg-slate-500/10 text-soft",
 };
 
-export function DealCard({ deal }: { deal: Deal }) {
+const analysisVerdict: Record<
+  DealAnalysis["verdict"],
+  { status: VerdictStatus; label: string }
+> = {
+  merita: { status: "go", label: "Merită" },
+  marja_subtire: { status: "warn", label: "Marjă subțire" },
+  nu_iese: { status: "stop", label: "Nu iese" },
+};
+
+type Status = "idle" | "loading" | "error" | "done";
+
+export function DealCard({
+  deal,
+  median,
+  comps,
+}: {
+  deal: Deal;
+  median: number;
+  comps: string;
+}) {
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
+  const [analysis, setAnalysis] = useState<DealAnalysis | null>(null);
+
   const verdict = computeVerdict(deal.price, deal.resale, deal.profit, deal.marginPct);
   const meta = [
     deal.year ? String(deal.year) : null,
@@ -19,6 +45,30 @@ export function DealCard({ deal }: { deal: Deal }) {
   ]
     .filter(Boolean)
     .join(" · ");
+
+  const loading = status === "loading";
+
+  async function analyze() {
+    if (loading) return;
+    setStatus("loading");
+    setError("");
+    try {
+      const res = await fetch("/api/deals/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deal, median, comps }),
+      });
+      const data: { analysis?: DealAnalysis; error?: string } = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Nu am putut analiza.");
+      setAnalysis(data.analysis ?? null);
+      setStatus("done");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nu am putut analiza.");
+      setStatus("error");
+    }
+  }
+
+  const av = analysis ? analysisVerdict[analysis.verdict] : null;
 
   return (
     <Card>
@@ -50,6 +100,55 @@ export function DealCard({ deal }: { deal: Deal }) {
           </a>
         )}
       </div>
+
+      {!analysis && (
+        <button
+          type="button"
+          onClick={analyze}
+          disabled={loading}
+          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-white/65 bg-white/55 px-3 py-1.5 text-sm font-medium text-ink backdrop-blur-md transition hover:bg-white/75 disabled:opacity-60"
+        >
+          {loading ? (
+            <>
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
+              Analizez…
+            </>
+          ) : (
+            "Analizează cu AI"
+          )}
+        </button>
+      )}
+
+      {status === "error" && (
+        <p className="mt-2 text-sm text-stop">{error}</p>
+      )}
+
+      {av && analysis && (
+        <div className="mt-3 rounded-2xl border border-white/60 bg-white/45 p-3 backdrop-blur-md">
+          <div className="flex items-center justify-between gap-3">
+            <span
+              className={`rounded-full px-3 py-1 text-sm font-semibold ${badgeClass[av.status]}`}
+            >
+              {av.label}
+            </span>
+            <span className="text-sm text-soft">
+              dai <strong className="text-ink">{eur(analysis.pret_corect)}</strong> →
+              ceri ~<strong className="text-ink">{eur(analysis.pret_vanzare)}</strong>{" "}
+              <strong className={badgeClass[av.status].split(" ")[1]}>
+                (+{eur(analysis.profit_estimat)})
+              </strong>
+            </span>
+          </div>
+          {analysis.atentie && (
+            <p className="mt-2 text-sm leading-relaxed text-ink">
+              <span className="font-semibold">Atenție:</span> {analysis.atentie}
+            </p>
+          )}
+          <p className="mt-1.5 text-sm leading-relaxed text-soft">
+            {analysis.rationament}
+          </p>
+        </div>
+      )}
     </Card>
   );
 }

@@ -21,6 +21,7 @@ export function DealFinder() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [median, setMedian] = useState(0);
   const [total, setTotal] = useState(0);
+  const [comps, setComps] = useState("");
 
   const canSearch = model.trim() !== "";
   const loading = status === "loading";
@@ -41,6 +42,7 @@ export function DealFinder() {
         median?: number;
         total?: number;
         deals?: Deal[];
+        comps?: string;
         error?: string;
       } = await res.json();
 
@@ -49,6 +51,7 @@ export function DealFinder() {
       setDeals(data.deals ?? []);
       setMedian(data.median ?? 0);
       setTotal(data.total ?? 0);
+      setComps(data.comps ?? "");
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nu am putut căuta.");
@@ -124,7 +127,12 @@ export function DealFinder() {
               {deals.length === 1 ? "deal" : "deal-uri"} din {total} anunțuri
             </p>
             {deals.map((deal, index) => (
-              <DealCard key={deal.url || index} deal={deal} />
+              <DealCard
+                key={deal.url || index}
+                deal={deal}
+                median={median}
+                comps={comps}
+              />
             ))}
           </>
         ))}

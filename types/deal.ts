@@ -14,3 +14,13 @@ export interface Deal extends Omit<Comparable, "price"> {
   profit: number;
   marginPct: number;
 }
+
+/** Verdictul AI pe un anunț anume, în contextul pieței. */
+export interface DealAnalysis {
+  verdict: "merita" | "marja_subtire" | "nu_iese";
+  pret_corect: number;
+  pret_vanzare: number;
+  profit_estimat: number;
+  atentie: string;
+  rationament: string;
+}

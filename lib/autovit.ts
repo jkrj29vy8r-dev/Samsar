@@ -38,15 +38,44 @@ interface FetchResult {
   html: string;
 }
 
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+    "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "ro-RO,ro;q=0.9,en;q=0.8",
+};
+
+/**
+ * Dacă e configurat un serviciu de scraping (env, doar pe server), trece cererea
+ * prin el ca să treacă de anti-bot-ul Autovit (DataDome). Altfel, întoarce
+ * URL-ul direct. Suportă ScraperAPI/Zyte-style prin endpoint + param `url`.
+ *
+ * Env vars (opționale, doar pe server):
+ * - SCRAPER_API_KEY — cheia serviciului
+ * - SCRAPER_API_ENDPOINT — endpoint-ul (default https://api.scraperapi.com)
+ * - SCRAPER_RENDER — "1" ca să ceară randare JS (implicit pornit)
+ */
+function scrapingRequestUrl(target: string): string {
+  const key = process.env.SCRAPER_API_KEY;
+  if (!key) return target;
+
+  const endpoint = process.env.SCRAPER_API_ENDPOINT ?? "https://api.scraperapi.com";
+  const params = new URLSearchParams({ api_key: key, url: target });
+  if (process.env.SCRAPER_RENDER !== "0") params.set("render", "true");
+  params.set("country_code", "eu");
+  return `${endpoint}/?${params.toString()}`;
+}
+
+/** True dacă cererea trece printr-un serviciu de scraping configurat. */
+export function usingScrapingService(): boolean {
+  return Boolean(process.env.SCRAPER_API_KEY);
+}
+
 async function fetchAutovitHtml(url: string): Promise<FetchResult> {
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-        "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "Accept-Language": "ro-RO,ro;q=0.9,en;q=0.8",
-    },
+  const requestUrl = scrapingRequestUrl(url);
+  const res = await fetch(requestUrl, {
+    headers: BROWSER_HEADERS,
     // Fără cache: prețurile de pe piață se schimbă.
     cache: "no-store",
   });
@@ -235,11 +264,13 @@ export async function fetchComparables(
   const { ok, status, html } = await fetchAutovitHtml(source);
 
   if (!ok) {
+    const blocked = status === 403 || status === 429;
     return {
-      error:
-        status === 403 || status === 429
-          ? "Autovit a blocat cererea automată. Lipește anunțurile manual deocamdată."
-          : `Autovit a răspuns cu ${status}. Încearcă din nou sau lipește manual.`,
+      error: blocked
+        ? usingScrapingService()
+          ? "Serviciul de scraping n-a putut aduce anunțurile acum. Încearcă din nou."
+          : "Autovit a blocat cererea automată. Lipește anunțurile manual deocamdată."
+        : `Autovit a răspuns cu ${status}. Încearcă din nou sau lipește manual.`,
     };
   }
 
