@@ -1,6 +1,6 @@
-# Samsar
+# Verdikt
 
-Samsar este o aplicație web care evaluează mașini pentru revânzare: cât să dai pe o mașină, cât să ceri la vânzare și ce profit poți scoate.
+Verdikt este o aplicație web care evaluează mașini pentru revânzare: cât să dai pe o mașină, cât să ceri la vânzare și ce profit poți scoate.
 
 Acest fișier stabilește regulile proiectului. Respectă-le pentru orice cod scris aici.
 

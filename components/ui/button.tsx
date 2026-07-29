@@ -10,15 +10,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  "inline-flex items-center justify-center rounded-btn font-sans font-semibold tracking-tight " +
-  "transition-transform active:translate-y-px disabled:cursor-not-allowed disabled:active:translate-y-0";
+  "inline-flex items-center justify-center rounded-2xl font-sans font-semibold tracking-tight " +
+  "transition active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-go px-4 py-3.5 text-[15px] text-white disabled:bg-disabled disabled:text-disabled-ink",
+    "brand-gradient px-5 py-3.5 text-[15px] text-white " +
+    "shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)] hover:brightness-105 " +
+    "disabled:opacity-50 disabled:shadow-none",
   secondary:
-    "border border-line bg-transparent px-4 py-3 text-sm text-soft hover:border-soft " +
-    "disabled:text-disabled-ink disabled:hover:border-line",
+    "border border-white/65 bg-white/55 px-5 py-3 text-sm text-ink backdrop-blur-md " +
+    "hover:bg-white/75 disabled:opacity-50",
 };
 
 export function Button({

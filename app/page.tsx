@@ -1,20 +1,64 @@
 import Link from "next/link";
+import { cn } from "@/lib/cn";
+
+const chips: { label: string; cls: string; dot: string }[] = [
+  { label: "merită", cls: "bg-go-soft text-go", dot: "bg-go" },
+  { label: "marjă subțire", cls: "bg-warn-soft text-warn", dot: "bg-warn" },
+  { label: "nu iese", cls: "bg-stop-soft text-stop", dot: "bg-stop" },
+];
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="font-mono text-5xl font-bold tracking-tight text-ink sm:text-7xl">
-        Samsar
-      </h1>
-      <p className="font-mono text-sm tracking-wide text-soft sm:text-base">
-        cât dai · cât ceri · cât scoți
-      </p>
-      <Link
-        href="/styleguide"
-        className="mt-2 rounded-btn border border-line px-4 py-2 text-sm font-medium text-soft hover:border-soft"
-      >
-        Ghid de stil →
-      </Link>
+    <main className="flex min-h-screen items-center justify-center px-6 py-16">
+      <div className="glass flex w-full max-w-md flex-col items-center gap-7 rounded-[2rem] px-8 py-12 text-center">
+        <span
+          aria-hidden
+          className="brand-gradient flex h-14 w-14 items-center justify-center rounded-3xl text-white shadow-[0_14px_30px_-10px_rgba(16,185,129,0.8)]"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        </span>
+
+        <div>
+          <h1 className="text-gradient text-6xl font-extrabold tracking-tight sm:text-7xl">
+            Verdikt
+          </h1>
+          <p className="mt-3 text-base text-soft">
+            Afli pe loc dacă mașina merită.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {chips.map((c) => (
+            <span
+              key={c.label}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold",
+                c.cls,
+              )}
+            >
+              <span className={cn("h-2 w-2 rounded-full", c.dot)} />
+              {c.label}
+            </span>
+          ))}
+        </div>
+
+        <Link
+          href="/styleguide"
+          className="brand-gradient rounded-2xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)] transition hover:brightness-105 active:scale-[0.98]"
+        >
+          Vezi ghidul de stil →
+        </Link>
+      </div>
     </main>
   );
 }

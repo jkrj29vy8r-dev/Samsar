@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Card, CardNote } from "@/components/ui/card";
@@ -8,14 +9,14 @@ import { Metric } from "@/components/ui/metric";
 import { VerdictCard } from "@/components/ui/verdict-card";
 
 export const metadata: Metadata = {
-  title: "Ghid de stil — Samsar",
-  description: "Tokenii și componentele de bază ale sistemului de design Samsar.",
+  title: "Ghid de stil — Verdikt",
+  description: "Tokenii și componentele de bază ale sistemului de design Verdikt.",
 };
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-[11px] font-bold uppercase tracking-[0.14em] text-soft">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-mute">
         {title}
       </h2>
       {children}
@@ -23,25 +24,27 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-const palette: { name: string; swatch: string; hex: string; ring?: boolean }[] = [
-  { name: "paper", swatch: "bg-paper", hex: "#EEF0EC", ring: true },
-  { name: "card", swatch: "bg-card", hex: "#FBFCFA", ring: true },
-  { name: "ink", swatch: "bg-ink", hex: "#16201B" },
-  { name: "soft", swatch: "bg-soft", hex: "#5B645E" },
-  { name: "line", swatch: "bg-line", hex: "#D5D9D2", ring: true },
-  { name: "go", swatch: "bg-go", hex: "#1F6E43" },
-  { name: "warn", swatch: "bg-warn", hex: "#B0700F" },
-  { name: "stop", swatch: "bg-stop", hex: "#A5382C" },
+const palette: { name: string; swatch: string; ring?: boolean }[] = [
+  { name: "ink", swatch: "bg-ink" },
+  { name: "soft", swatch: "bg-soft" },
+  { name: "mute", swatch: "bg-mute" },
+  { name: "go", swatch: "bg-go" },
+  { name: "go-soft", swatch: "bg-go-soft", ring: true },
+  { name: "warn", swatch: "bg-warn" },
+  { name: "warn-soft", swatch: "bg-warn-soft", ring: true },
+  { name: "stop", swatch: "bg-stop" },
+  { name: "stop-soft", swatch: "bg-stop-soft", ring: true },
+  { name: "brand", swatch: "brand-gradient" },
 ];
 
 export default function StyleguidePage() {
   return (
     <div className="mx-auto flex max-w-[560px] flex-col gap-9 px-4 py-8">
-      <header className="flex flex-col gap-2">
+      <header className="flex flex-col gap-3">
         <Brand />
         <p className="text-sm leading-relaxed text-soft">
-          Sistemul de design: fundal de hârtie, verde de curse, cifre de odometru
-          și verdict de semafor.
+          Sistemul de design: auroră colorată, suprafețe de sticlă, accent de
+          brand și verdict de semafor.
         </p>
       </header>
 
@@ -52,12 +55,13 @@ export default function StyleguidePage() {
             {palette.map((c) => (
               <li key={c.name} className="flex flex-col gap-1.5">
                 <span
-                  className={`h-14 w-full rounded-[10px] ${c.swatch} ${
-                    c.ring ? "ring-1 ring-inset ring-line" : ""
-                  }`}
+                  className={cn(
+                    "h-14 w-full rounded-2xl",
+                    c.swatch,
+                    c.ring && "ring-1 ring-inset ring-slate-900/10",
+                  )}
                 />
-                <span className="font-mono text-xs text-ink">{c.name}</span>
-                <span className="font-mono text-[11px] text-soft">{c.hex}</span>
+                <span className="text-xs font-medium text-ink">{c.name}</span>
               </li>
             ))}
           </ul>
@@ -69,29 +73,26 @@ export default function StyleguidePage() {
         <Card>
           <div className="flex flex-col gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-wide text-soft">
-                Sans · interfață
+              <div className="text-[11px] uppercase tracking-wide text-mute">
+                Titlu cu gradient
               </div>
-              <p className="mt-1 text-2xl font-bold tracking-tight text-ink">
-                Cât dai, cât ceri, cât scoți
+              <p className="text-gradient mt-1 text-3xl font-extrabold tracking-tight">
+                Merită sau nu
               </p>
+            </div>
+            <div className="border-t border-slate-900/5 pt-4">
+              <div className="text-[11px] uppercase tracking-wide text-mute">
+                Corp și cifre tabulare
+              </div>
               <p className="mt-1 text-sm leading-relaxed text-soft">
                 Text de corp pentru descrieri și explicații, ușor de citit pe
                 telefon.
               </p>
-            </div>
-            <div className="border-t border-line pt-4">
-              <div className="text-[11px] uppercase tracking-wide text-soft">
-                Mono tabular · bani (odometru)
-              </div>
-              <div className="mt-2 flex flex-col gap-0.5 font-mono text-2xl font-semibold tabular-nums text-ink">
+              <div className="mt-2 flex flex-col gap-0.5 text-2xl font-semibold tabular-nums text-ink">
                 <span>9.200 €</span>
                 <span>12.500 €</span>
                 <span>128.000 km</span>
               </div>
-              <p className="mt-2 text-xs text-soft">
-                Cifrele se aliniază pe coloană — senzație de odometru.
-              </p>
             </div>
           </div>
         </Card>
@@ -114,24 +115,22 @@ export default function StyleguidePage() {
 
       {/* CARDURI */}
       <Section title="Carduri">
-        <Card label="Card standard" action={<CardNote>opțional</CardNote>}>
+        <Card label="Card de sticlă" action={<CardNote>opțional</CardNote>}>
           <p className="text-[14.5px] leading-relaxed text-ink">
-            Colțuri rotunjite, linie subțire, fundal aproape alb pe hârtie. Baza
+            Suprafață translucidă cu blur, colțuri generoase și umbră fină. Baza
             pentru orice secțiune.
           </p>
         </Card>
         <Card
-          variant="quiet"
-          label="Card discret"
+          label="Card cu acțiune"
           action={
-            <Button variant="secondary" className="px-2.5 py-1 text-[11px]">
+            <Button variant="secondary" className="px-3 py-1.5 text-[12px]">
               copiază
             </Button>
           }
         >
           <p className="text-[14.5px] leading-relaxed text-ink">
-            Varianta „quiet”, cu contur punctat, pentru context secundar precum
-            raționamentul din spatele evaluării.
+            Același card, cu un buton discret în capul lui pentru acțiuni rapide.
           </p>
         </Card>
       </Section>
@@ -164,10 +163,10 @@ export default function StyleguidePage() {
       {/* METRICI */}
       <Section title="Metrici">
         <Card label="Cifre pe rând">
-          <div className="grid grid-cols-2 gap-x-2.5 gap-y-3">
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">
             <Metric label="dai pe ea" value="9.200 €" />
             <Metric label="ceri la vânzare" value="12.500 €" />
-            <Metric label="marjă brută" value="3.300 €" />
+            <Metric label="marjă brută" value="3.300 €" tone="go" />
             <Metric label="se vinde în" value="21 zile" />
           </div>
         </Card>
@@ -183,7 +182,7 @@ export default function StyleguidePage() {
           netValue="2.300 €"
           sub="marjă sănătoasă pentru un flip"
         >
-          <div className="grid grid-cols-2 gap-x-2.5 gap-y-3">
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">
             <Metric label="dai pe ea" value="9.200 €" />
             <Metric label="ceri la vânzare" value="12.500 €" />
             <Metric label="marjă brută" value="3.300 €" />
@@ -199,7 +198,7 @@ export default function StyleguidePage() {
           netValue="640 €"
           sub="sub 8% — puțin loc de greșeală"
         >
-          <div className="grid grid-cols-2 gap-x-2.5 gap-y-3">
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">
             <Metric label="dai pe ea" value="8.900 €" />
             <Metric label="ceri la vânzare" value="10.100 €" />
             <Metric label="marjă brută" value="1.200 €" />
@@ -215,7 +214,7 @@ export default function StyleguidePage() {
           netValue="−450 €"
           sub="profitul net e zero sau negativ"
         >
-          <div className="grid grid-cols-2 gap-x-2.5 gap-y-3">
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">
             <Metric label="dai pe ea" value="11.000 €" />
             <Metric label="ceri la vânzare" value="11.400 €" />
             <Metric label="marjă brută" value="400 €" />

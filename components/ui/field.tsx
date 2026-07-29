@@ -2,9 +2,10 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
 const controlClass =
-  "w-full rounded-field border border-line bg-white px-3 py-2.5 text-[15px] text-ink " +
-  "placeholder:text-soft/70 focus-visible:border-go focus-visible:outline-2 " +
-  "focus-visible:outline-offset-1 focus-visible:outline-go";
+  "w-full rounded-2xl border border-white/70 bg-white/55 px-4 py-3 text-[15px] text-ink " +
+  "backdrop-blur-md transition placeholder:text-mute focus-visible:border-go " +
+  "focus-visible:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-0 " +
+  "focus-visible:outline-go";
 
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -21,7 +22,7 @@ interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
 export function Field({ label, hint, wide, className, ...props }: FieldProps) {
   return (
     <label className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2", className)}>
-      <span className="text-xs font-medium text-soft">{label}</span>
+      <span className="text-[13px] font-medium text-soft">{label}</span>
       <input className={controlClass} {...props} />
       {hint && <span className="text-xs leading-snug text-soft">{hint}</span>}
     </label>
@@ -44,8 +45,12 @@ export function TextareaField({
 }: TextareaFieldProps) {
   return (
     <label className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2", className)}>
-      <span className="text-xs font-medium text-soft">{label}</span>
-      <textarea rows={rows} className={cn(controlClass, "resize-y leading-relaxed")} {...props} />
+      <span className="text-[13px] font-medium text-soft">{label}</span>
+      <textarea
+        rows={rows}
+        className={cn(controlClass, "resize-y leading-relaxed")}
+        {...props}
+      />
       {hint && <span className="text-xs leading-snug text-soft">{hint}</span>}
     </label>
   );

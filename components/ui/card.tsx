@@ -1,39 +1,24 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type CardVariant = "solid" | "quiet";
-
 interface CardProps {
   /** Eticheta scurtă din capul cardului (majuscule, discretă). */
   label?: ReactNode;
-  /** Element la dreapta etichetei — ex. „opțional” sau un buton de copiere. */
+  /** Element la dreapta etichetei — ex. „opțional” sau un buton. */
   action?: ReactNode;
-  /** „quiet” = fundal transparent cu contur punctat, pentru context secundar. */
-  variant?: CardVariant;
   className?: string;
   children: ReactNode;
 }
 
-const variants: Record<CardVariant, string> = {
-  solid: "border border-line bg-card",
-  quiet: "border border-dashed border-line bg-transparent",
-};
-
-export function Card({
-  label,
-  action,
-  variant = "solid",
-  className,
-  children,
-}: CardProps) {
+export function Card({ label, action, className, children }: CardProps) {
   const hasHeader = label != null || action != null;
 
   return (
-    <section className={cn("rounded-card p-4", variants[variant], className)}>
+    <section className={cn("glass rounded-3xl p-5", className)}>
       {hasHeader && (
         <div className="mb-3 flex items-center justify-between gap-2">
           {label != null && (
-            <span className="text-[11px] font-bold uppercase tracking-[0.09em] text-soft">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-mute">
               {label}
             </span>
           )}
@@ -45,7 +30,11 @@ export function Card({
   );
 }
 
-/** Notă discretă pentru capul cardului (ex. „opțional”, „se scad din profit”). */
+/** Notă discretă pentru capul cardului (ex. „opțional”). */
 export function CardNote({ children }: { children: ReactNode }) {
-  return <span className="text-[11px] font-medium normal-case text-soft/75">{children}</span>;
+  return (
+    <span className="text-[11px] font-medium normal-case text-soft">
+      {children}
+    </span>
+  );
 }

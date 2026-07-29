@@ -1,29 +1,41 @@
 import { cn } from "@/lib/cn";
 
 interface BrandProps {
-  /** Ascunde subtitlul „cât dai · cât ceri · cât scoți”. */
+  /** Ascunde tagline-ul de sub logotip. */
   hideTagline?: boolean;
   className?: string;
 }
 
-/** Semnătura vizuală: tab verde de curse + logotipul monospace. */
+/** Semnătura Verdikt: badge cu bifă în gradient + logotip cu text-gradient. */
 export function Brand({ hideTagline = false, className }: BrandProps) {
   return (
-    <div className={className}>
-      <div className="flex items-center gap-2.5">
-        <span
-          aria-hidden
-          className="h-[22px] w-2.5 rounded-[2px] bg-go shadow-[2px_0_0_var(--color-ink)]"
-        />
-        <span className="font-mono text-[22px] font-bold tracking-tight text-ink">
-          samsar
+    <div className={cn("flex items-center gap-3", className)}>
+      <span
+        aria-hidden
+        className="brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)]"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </span>
+      <div className="flex flex-col">
+        <span className="text-gradient text-2xl font-extrabold tracking-tight">
+          Verdikt
         </span>
+        {!hideTagline && (
+          <span className="text-xs font-medium text-soft">
+            merită sau nu — afli din prima
+          </span>
+        )}
       </div>
-      {!hideTagline && (
-        <p className={cn("mt-1.5 font-mono text-[11.5px] tracking-wide text-soft")}>
-          cât dai · cât ceri · cât scoți
-        </p>
-      )}
     </div>
   );
 }

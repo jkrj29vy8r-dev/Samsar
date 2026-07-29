@@ -8,14 +8,14 @@ interface MetricProps {
   label: string;
   /** Valoarea deja formatată (ex. „9.200 €”, „21 zile”). */
   value: string;
-  /** „lg” = cifra mare de tip odometru din cardul-verdict. */
+  /** „lg” = cifra mare din cardul-verdict. */
   size?: MetricSize;
   tone?: MetricTone;
 }
 
 const sizeClass: Record<MetricSize, string> = {
-  md: "text-[19px] font-semibold",
-  lg: "text-[42px] font-bold leading-[1.05] tracking-tight",
+  md: "text-xl font-semibold",
+  lg: "text-[40px] font-bold leading-none tracking-tight",
 };
 
 const toneClass: Record<MetricTone, string> = {
@@ -25,14 +25,14 @@ const toneClass: Record<MetricTone, string> = {
   stop: "text-stop",
 };
 
-/** Cifră de bani în monospace tabular — aliniere de odometru. */
+/** Cifră de bani cu aliniere tabulară — clară și lizibilă. */
 export function Metric({ label, value, size = "md", tone = "ink" }: MetricProps) {
   return (
     <div>
-      <div className="text-[11px] tracking-wide text-soft">{label}</div>
+      <div className="text-xs font-medium text-soft">{label}</div>
       <div
         className={cn(
-          "mt-0.5 font-mono tabular-nums",
+          "mt-1 tabular-nums",
           sizeClass[size],
           toneClass[tone],
         )}
