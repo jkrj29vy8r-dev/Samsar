@@ -108,7 +108,7 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const response = await client.messages.create({
-      model: "claude-opus-5",
+      model: "claude-sonnet-5",
       max_tokens: 16000,
       system: EVALUATION_SYSTEM,
       output_config: {
