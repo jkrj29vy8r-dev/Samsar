@@ -53,10 +53,10 @@ export default function HomePage() {
         </div>
 
         <Link
-          href="/styleguide"
+          href="/evalueaza"
           className="brand-gradient rounded-2xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(16,185,129,0.75)] transition hover:brightness-105 active:scale-[0.98]"
         >
-          Vezi ghidul de stil →
+          Începe evaluarea →
         </Link>
       </div>
     </main>
