@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import type { DealQuery } from "@/types/deal";
-import { fetchComparables } from "@/lib/autovit";
+import { searchMarket } from "@/lib/market-search";
 import { rankDeals } from "@/lib/deals";
 
-// Căutarea pe marketplace se face din rută, nu din client.
+// Căutarea pe piață se face din rută, nu din client. Cheia stă pe server.
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 function validate(body: unknown): { query: DealQuery } | { error: string } {
   if (typeof body !== "object" || body === null) {
@@ -39,10 +39,11 @@ export async function POST(request: Request): Promise<Response> {
   const { query } = checked;
 
   try {
-    const result = await fetchComparables({
+    const result = await searchMarket({
       model: query.model,
       year: query.year,
       km: "",
+      budget: query.budget,
     });
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: 502 });

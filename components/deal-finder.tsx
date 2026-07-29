@@ -87,7 +87,8 @@ export function DealFinder() {
             />
           </div>
           <p className="mt-2 text-xs leading-relaxed text-soft">
-            Caut pe Autovit, calculez prețul pieței și scot mașinile de sub el.
+            Caut pe net anunțuri reale, calculez prețul pieței și scot mașinile
+            de sub el.
           </p>
         </Card>
 

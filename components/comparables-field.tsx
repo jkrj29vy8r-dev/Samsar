@@ -16,7 +16,7 @@ interface ComparablesFieldProps {
 type Status = "idle" | "loading" | "error";
 
 const PLACEHOLDER =
-  "Adu automat de pe Autovit sau lipește manual 10–20 anunțuri similare.\n\n" +
+  "Caută automat pe net sau lipește manual 10–20 anunțuri similare.\n\n" +
   "ex.\nPassat 2017 175.000 km – 11.400 € – Cluj\n" +
   "Passat 2018 160.000 km – 12.900 € – București";
 
@@ -56,7 +56,7 @@ export function ComparablesField({ value, onChange, query }: ComparablesFieldPro
       }
 
       onChange(value.trim() ? `${value.trim()}\n${data.text}` : data.text);
-      setNote(`Am adus ${data.count} anunțuri de pe Autovit. Verifică-le înainte de evaluare.`);
+      setNote(`Am găsit ${data.count} anunțuri. Verifică-le înainte de evaluare.`);
       setStatus("idle");
     } catch (err) {
       setNote(err instanceof Error ? err.message : "N-am putut aduce anunțuri.");
@@ -74,7 +74,7 @@ export function ComparablesField({ value, onChange, query }: ComparablesFieldPro
           onClick={fetchFromAutovit}
           disabled={!canFetch || loading}
         >
-          {loading ? "Caut…" : "Adu de pe Autovit"}
+          {loading ? "Caut…" : "Caută pe net"}
         </Button>
       }
     >
@@ -91,7 +91,7 @@ export function ComparablesField({ value, onChange, query }: ComparablesFieldPro
       >
         {note ||
           (canFetch
-            ? "Apasă „Adu de pe Autovit” sau lipește manual."
+            ? "Apasă „Caută pe net” sau lipește manual."
             : "Completează marca și modelul ca să pot căuta automat.")}
       </p>
     </Card>

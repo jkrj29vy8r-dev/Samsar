@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type { ComparableQuery } from "@/types/comparable";
-import { fetchComparables } from "@/lib/autovit";
+import { searchMarket } from "@/lib/market-search";
 
-// Apelul extern (Autovit) se face din rută, nu din client.
+// Căutarea externă se face din rută, nu din client. Cheia stă pe server.
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 function validate(body: unknown): { query: ComparableQuery } | { error: string } {
   if (typeof body !== "object" || body === null) {
@@ -37,7 +37,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   try {
-    const result = await fetchComparables(checked.query);
+    const result = await searchMarket(checked.query);
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: 502 });
     }
@@ -49,7 +49,7 @@ export async function POST(request: Request): Promise<Response> {
   } catch (error) {
     console.error("Comparables route error:", error);
     return NextResponse.json(
-      { error: "Nu am putut contacta Autovit. Încearcă din nou sau lipește manual." },
+      { error: "Nu am putut căuta acum. Încearcă din nou sau lipește manual." },
       { status: 502 },
     );
   }
