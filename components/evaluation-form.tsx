@@ -4,9 +4,10 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardNote } from "@/components/ui/card";
-import { Field, TextareaField } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Segmented } from "@/components/ui/segmented";
 import { PhotoUpload, type PhotoPreview } from "@/components/ui/photo-upload";
+import { ComparablesField } from "@/components/comparables-field";
 
 interface CarPhoto extends PhotoPreview {
   file: File;
@@ -25,7 +26,7 @@ export function EvaluationForm() {
   const [askPrice, setAskPrice] = useState("");
   const [extras, setExtras] = useState("");
   const [comps, setComps] = useState("");
-  const [ready, setReady] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   function addPhotos(files: File[]) {
     setPhotos((prev) => {
@@ -52,8 +53,24 @@ export function EvaluationForm() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (canSubmit) setReady(true);
+    if (canSubmit) setSubmitted(true);
   }
+
+  // Rezumatul datelor colectate — deocamdată doar le afișăm (fără API).
+  const details: { label: string; value: string }[] = [
+    { label: "Marcă și model", value: model },
+    { label: "An", value: year },
+    { label: "Km", value: km },
+    { label: "Motorizare", value: engine },
+    { label: "Combustibil", value: fuel },
+    { label: "Cutie", value: gearbox },
+    { label: "Dotări", value: extras },
+    { label: "Preț cerut", value: askPrice ? `${askPrice} €` : "" },
+  ].filter((row) => row.value.trim() !== "");
+
+  const compsCount = comps
+    .split("\n")
+    .filter((line) => line.trim() !== "").length;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -129,48 +146,44 @@ export function EvaluationForm() {
         </div>
       </Card>
 
-      <Card>
-        <TextareaField
-          label="Anunțuri comparabile"
-          rows={6}
-          placeholder={"Lipește 10–20 anunțuri similare (același model, an și km apropiate).\n\nex.\nPassat 2017 175.000 km – 11.400 € – Cluj\nPassat 2018 160.000 km – 12.900 € – București"}
-          value={comps}
-          onChange={(e) => setComps(e.target.value)}
-          hint="Deocamdată le lipești manual."
-        />
-      </Card>
+      <ComparablesField value={comps} onChange={setComps} />
 
       <Button type="submit" fullWidth disabled={!canSubmit}>
         {canSubmit ? "Evaluează deal-ul" : "Completează preț, an și comparabile"}
       </Button>
 
-      {ready && (
-        <div className="glass flex items-start gap-3 rounded-3xl p-4">
-          <span
-            aria-hidden
-            className="brand-gradient mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl text-white"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          </span>
-          <div>
-            <p className="font-semibold text-ink">Datele sunt gata de evaluare</p>
-            <p className="text-sm leading-relaxed text-soft">
-              Motorul care compară cu piața și calculează marja se conectează în
-              pasul următor.
-            </p>
-          </div>
-        </div>
+      {submitted && (
+        <Card label="Date colectate">
+          <p className="mb-3 text-sm leading-relaxed text-soft">
+            Deocamdată doar îți arăt ce am strâns. Evaluarea reală se conectează
+            la pasul următor.
+          </p>
+
+          <dl className="divide-y divide-slate-900/5">
+            <SummaryRow label="Poze" value={`${photos.length} din ${MAX_PHOTOS}`} />
+            {details.map((row) => (
+              <SummaryRow key={row.label} label={row.label} value={row.value} />
+            ))}
+            <SummaryRow
+              label="Comparabile"
+              value={`${compsCount} ${compsCount === 1 ? "anunț" : "anunțuri"}`}
+            />
+          </dl>
+
+          <pre className="mt-3 max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-2xl border border-white/60 bg-white/50 p-3 text-[13px] leading-relaxed text-ink">
+            {comps}
+          </pre>
+        </Card>
       )}
     </form>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 py-2">
+      <dt className="text-sm text-soft">{label}</dt>
+      <dd className="text-right text-sm font-medium text-ink">{value}</dd>
+    </div>
   );
 }
