@@ -14,7 +14,7 @@ export function Card({ label, action, className, children }: CardProps) {
   const hasHeader = label != null || action != null;
 
   return (
-    <section className={cn("glass rounded-3xl p-5", className)}>
+    <section className={cn("glass rise rounded-3xl p-5", className)}>
       {hasHeader && (
         <div className="mb-3 flex items-center justify-between gap-2">
           {label != null && (
