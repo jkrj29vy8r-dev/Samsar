@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import Hero3D from "@/components/hero/Hero3D";
 
 const chips: { label: string; cls: string; dot: string }[] = [
   { label: "merită", cls: "bg-go-soft text-go", dot: "bg-go" },
@@ -15,8 +16,10 @@ const steps: { n: string; title: string; desc: string }[] = [
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-5 py-14">
-      <section className="glass gradient-ring rise flex w-full max-w-md flex-col items-center gap-7 rounded-[2rem] px-8 py-12 text-center">
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-5 overflow-hidden px-5 py-14">
+      <Hero3D />
+
+      <section className="glass gradient-ring rise relative z-10 flex w-full max-w-md flex-col items-center gap-7 rounded-[2rem] px-8 py-12 text-center">
         <span
           aria-hidden
           className="brand-gradient floaty flex h-16 w-16 items-center justify-center rounded-3xl text-white shadow-[0_18px_36px_-12px_rgba(16,185,129,0.85)]"
@@ -79,7 +82,7 @@ export default function HomePage() {
       </section>
 
       <section
-        className="glass rise w-full max-w-md rounded-[1.75rem] px-6 py-6"
+        className="glass rise relative z-10 w-full max-w-md rounded-[1.75rem] px-6 py-6"
         style={{ animationDelay: "0.12s" }}
       >
         <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-mute">
