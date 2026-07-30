@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Metric } from "@/components/ui/metric";
 import { VerdictCard } from "@/components/ui/verdict-card";
+import { CountUp } from "@/components/ui/count-up";
 import { computeVerdict, eur, num } from "@/lib/money";
 
 interface EvaluationResultProps {
@@ -61,7 +62,7 @@ export function EvaluationResultView({ car, result, onReset }: EvaluationResultP
         label={verdict.label}
         confidence={`încredere ${result.incredere}`}
         netLabel="profit net estimat"
-        netValue={eur(net)}
+        netValue={<CountUp value={net} format={eur} />}
         sub={verdict.sub}
       >
         <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">

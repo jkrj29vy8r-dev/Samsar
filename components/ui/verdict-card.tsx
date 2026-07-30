@@ -35,8 +35,8 @@ interface VerdictCardProps {
   status: VerdictStatus;
   /** Verdictul: „Merită” / „Marjă subțire” / „Nu iese”. */
   label: string;
-  /** Cifra mare, deja formatată (ex. „2.300 €”). */
-  netValue: string;
+  /** Cifra mare — text deja formatat sau un nod (ex. <CountUp />). */
+  netValue: ReactNode;
   /** Eticheta de deasupra cifrei (ex. „profit net estimat”). */
   netLabel: string;
   /** Detaliu scurt sub cifră. */

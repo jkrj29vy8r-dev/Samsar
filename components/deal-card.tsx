@@ -28,10 +28,13 @@ export function DealCard({
   deal,
   median,
   comps,
+  delay = 0,
 }: {
   deal: Deal;
   median: number;
   comps: string;
+  /** Întârzierea animației de intrare, pentru efect de cascadă. */
+  delay?: number;
 }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -71,7 +74,7 @@ export function DealCard({
   const av = analysis ? analysisVerdict[analysis.verdict] : null;
 
   return (
-    <Card>
+    <Card className="hover-lift" style={{ animationDelay: `${delay}s` }}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-semibold text-ink">{deal.title}</p>

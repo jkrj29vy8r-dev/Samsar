@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
+import { DealCardSkeleton } from "@/components/ui/skeleton";
 import { DealCard } from "@/components/deal-card";
 import { eur } from "@/lib/money";
 import type { Deal } from "@/types/deal";
@@ -104,6 +105,15 @@ export function DealFinder() {
         </Button>
       </form>
 
+      {loading && (
+        <>
+          <p className="px-1 text-xs text-soft">Caut pe net anunțuri reale…</p>
+          {[0, 1, 2].map((i) => (
+            <DealCardSkeleton key={i} style={{ animationDelay: `${i * 0.08}s` }} />
+          ))}
+        </>
+      )}
+
       {status === "error" && (
         <Card>
           <p className="text-sm font-semibold text-stop">Căutarea nu a mers</p>
@@ -133,6 +143,7 @@ export function DealFinder() {
                 deal={deal}
                 median={median}
                 comps={comps}
+                delay={index * 0.07}
               />
             ))}
           </>
