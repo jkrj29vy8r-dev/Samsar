@@ -63,11 +63,22 @@ export function VerdictCard({
   const s = styles[status];
 
   return (
-    <section className="glass relative overflow-hidden rounded-3xl p-5">
+    <section className="glass gradient-ring relative overflow-hidden rounded-3xl p-5">
+      <span
+        aria-hidden
+        className={cn("pointer-events-none absolute inset-x-0 top-0 h-1", s.dot)}
+      />
       <span
         aria-hidden
         className={cn(
           "pointer-events-none absolute -top-12 right-4 h-28 w-44 rounded-full blur-3xl",
+          s.glow,
+        )}
+      />
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute -bottom-16 -left-10 h-32 w-32 rounded-full opacity-60 blur-3xl",
           s.glow,
         )}
       />
@@ -90,7 +101,7 @@ export function VerdictCard({
         </p>
         <p
           className={cn(
-            "mt-1 text-[40px] font-bold leading-none tracking-tight tabular-nums",
+            "mt-1 text-[44px] font-extrabold leading-none tracking-tight tabular-nums",
             s.num,
           )}
         >

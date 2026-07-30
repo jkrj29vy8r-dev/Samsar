@@ -78,9 +78,21 @@ export function DealCard({
           {meta && <p className="mt-0.5 text-xs text-soft">{meta}</p>}
         </div>
         <span
-          className={`shrink-0 rounded-full px-3 py-1 text-sm font-semibold ${badgeClass[verdict.status]}`}
+          className={`inline-flex shrink-0 items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ${badgeClass[verdict.status]}`}
         >
-          +{eur(deal.profit)}
+          <svg
+            viewBox="0 0 24 24"
+            className="h-3.5 w-3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 17 17 7" />
+            <path d="M8 7h9v9" />
+          </svg>
+          {eur(deal.profit)}
         </span>
       </div>
 
@@ -114,7 +126,12 @@ export function DealCard({
               Analizez…
             </>
           ) : (
-            "Analizează cu AI"
+            <>
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-go" fill="currentColor">
+                <path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2z" />
+              </svg>
+              Analizează cu AI
+            </>
           )}
         </button>
       )}
@@ -124,7 +141,13 @@ export function DealCard({
       )}
 
       {av && analysis && (
-        <div className="mt-3 rounded-2xl border border-white/60 bg-white/45 p-3 backdrop-blur-md">
+        <div className="gradient-ring rise mt-3 rounded-2xl border border-white/60 bg-white/45 p-3 backdrop-blur-md">
+          <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-mute">
+            <svg viewBox="0 0 24 24" className="h-3 w-3 text-go" fill="currentColor">
+              <path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2z" />
+            </svg>
+            verdict AI
+          </div>
           <div className="flex items-center justify-between gap-3">
             <span
               className={`rounded-full px-3 py-1 text-sm font-semibold ${badgeClass[av.status]}`}
